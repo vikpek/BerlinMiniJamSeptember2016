@@ -39,7 +39,7 @@ public class Person : MonoBehaviour
     public float ScorePerSecond;
 
     //----------------------------------------------------------
-    public Dictionary<GameState.Department, float> DeparmentQualities = new Dictionary<GameState.Department, float>();
+    public Dictionary<GameState.Department, float> DepartmentQualities = new Dictionary<GameState.Department, float>();
 
     //----------------------------------------------------------
     private GameState pGameState;
@@ -49,14 +49,38 @@ public class Person : MonoBehaviour
     //----------------------------------------------------------
     private void Start ()
     {
+        this.InitDepartments();
+
         this.StartListeningState();
         this.pPlayer = PlayerController.i;
         this.ScorePerSecond = 1;
         this.pGameState = GameState.Instance;
     }
 
+    //----------------------------------------------------------
     private void InitDepartments()
     {
+        this.DepartmentQualities.Clear();
+
+        var pQualities = GameState.Instance.DepartmentQualities[this.Department];
+        for (int i = 0; i < (int)GameState.Department.Num; ++i)
+        {
+            float[] aRange;
+            var eDepartmentTo = (GameState.Department)i;
+            if (pQualities.TryGetValue(eDepartmentTo, out aRange))
+            {
+                var fValue = Random.Range(aRange[0], aRange[1]);
+                this.DepartmentQualities.Add(eDepartmentTo, fValue);
+
+                Debug.Log("Person: To Department: " + eDepartmentTo.ToString() + ": " + fValue, this);
+            }
+            else
+            {
+                this.DepartmentQualities.Add(eDepartmentTo, 1f);
+                Debug.LogError("From: " + this.Department.ToString() + " To: " + eDepartmentTo.ToString() + " did not have a range setup!" , this);
+            }
+        }
+
     }
 
     //----------------------------------------------------------
@@ -67,7 +91,6 @@ public class Person : MonoBehaviour
 
     //----------------------------------------------------------
     // Every 0.5
-
     private float timer = 0;
     private float maxTime = 0.5f;
     private void Update ()

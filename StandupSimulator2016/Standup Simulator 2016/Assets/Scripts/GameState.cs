@@ -48,7 +48,6 @@ public class GameState : MonoBehaviour
 
     //----------------------------------------------------------
     private List<Department> pPersonSetup;
-    private Random pRandom;
 
     //----------------------------------------------------------
     private void Awake ()
@@ -133,8 +132,22 @@ public class GameState : MonoBehaviour
     //----------------------------------------------------------
     void InitDepartmentQuality(Department eFrom, Department eTo, float fFrom, float fTo)
     {
-        this.DepartmentQualities[eFrom] = new Dictionary<Department, float[]>();
-        this.DepartmentQualities[eFrom][eTo] = new float[2];
+        if (!this.DepartmentQualities.ContainsKey(eFrom))
+        {
+            this.DepartmentQualities.Add(eFrom, null);
+        }
+        if (this.DepartmentQualities[eFrom] == null)
+        {
+            this.DepartmentQualities[eFrom] = new Dictionary<Department, float[]>();
+        }
+        if (!this.DepartmentQualities[eFrom].ContainsKey(eTo))
+        {
+            this.DepartmentQualities[eFrom].Add(eTo, null);
+        }
+        if (this.DepartmentQualities[eFrom][eTo] == null)
+        {
+            this.DepartmentQualities[eFrom][eTo] = new float[2];
+        }
         this.DepartmentQualities[eFrom][eTo][0] = fFrom;
         this.DepartmentQualities[eFrom][eTo][1] = fTo;
     }
