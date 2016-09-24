@@ -34,13 +34,17 @@ public class GameState : MonoBehaviour
     public List<GameObject> PersonPrefabs = new List<GameObject>();
 
     [Space(20)]
+    public float Score;
     public State CurrentState;
     public float GameSecondsElapsed;
     public Person[] CurrentPersons;
-    public Person CurrentSpeakingPerson;
+    public int CurrentPersonSpeakingIndex = -1;
 
     //----------------------------------------------------------
-    public Dictionary<Department, Dictionary<Department, float[]>> DeparmentQualities = new Dictionary<Department, Dictionary<Department, float[]>>();
+    public Person CurrentPersonSpeaking {  get { return this.CurrentPersons[this.CurrentPersonSpeakingIndex]; } }
+
+    //----------------------------------------------------------
+    public Dictionary<Department, Dictionary<Department, float[]>> DepartmentQualities = new Dictionary<Department, Dictionary<Department, float[]>>();
 
     //----------------------------------------------------------
     private List<Department> pPersonSetup;
@@ -66,6 +70,7 @@ public class GameState : MonoBehaviour
     public void StartGame()
     {
         this.GameSecondsElapsed = 0;
+        this.Score = 0;
         if (this.pCountDownArm != null)
         {
             this.pCountDownArm.InitateCountDown((int)this.GameSeconds);
@@ -76,6 +81,15 @@ public class GameState : MonoBehaviour
     //----------------------------------------------------------
     [ContextMenu("InitGame")]
     void InitGame()
+    {
+        this.InitDepartmentQualities();
+        this.InitPersonDepartments();
+
+        this.CreatePersons();
+    }
+
+    //----------------------------------------------------------
+    void InitPersonDepartments()
     {
         this.pPersonSetup = new List<Department>();
         for (int i = 0; i < this.Persons; ++i)
@@ -90,23 +104,39 @@ public class GameState : MonoBehaviour
             }
         }
         Shuffle(this.pPersonSetup);
-
-        this.CreatePersons();
     }
 
     //----------------------------------------------------------
-    public static void Shuffle<T>(IList<T> list)
+    void InitDepartmentQualities()
     {
-        var rng = new System.Random();
-        int n = list.Count;
-        while (n > 1)
-        {
-            n--;
-            int k = rng.Next(n + 1);
-            T value = list[k];
-            list[k] = list[n];
-            list[n] = value;
-        }
+        this.InitDepartmentQuality(Department.Art, Department.Art, 1f, 1f);
+        this.InitDepartmentQuality(Department.Art, Department.Code, 0.4f, 0.6f);
+        this.InitDepartmentQuality(Department.Art, Department.GameDesign, 0.6f, 0.8f);
+        this.InitDepartmentQuality(Department.Art, Department.Operations, 0.3f, 0.5f);
+
+        this.InitDepartmentQuality(Department.Code, Department.Art, 0.4f, 0.6f);
+        this.InitDepartmentQuality(Department.Code, Department.Code, 1f, 1f);
+        this.InitDepartmentQuality(Department.Code, Department.GameDesign, 0.7f, 0.9f);
+        this.InitDepartmentQuality(Department.Code, Department.Operations, 0.2f, 0.4f);
+
+        this.InitDepartmentQuality(Department.GameDesign, Department.Art, 0.6f, 0.8f);
+        this.InitDepartmentQuality(Department.GameDesign, Department.Code, 0.7f, 0.9f);
+        this.InitDepartmentQuality(Department.GameDesign, Department.GameDesign, 1f, 1f);
+        this.InitDepartmentQuality(Department.GameDesign, Department.Operations, 0.5f, 0.7f);
+
+        this.InitDepartmentQuality(Department.Operations, Department.Art, 0.3f, 0.5f);
+        this.InitDepartmentQuality(Department.Operations, Department.Code, 0.2f, 0.4f);
+        this.InitDepartmentQuality(Department.Operations, Department.GameDesign, 0.5f, 0.7f);
+        this.InitDepartmentQuality(Department.Operations, Department.Operations, 1f, 1f);
+    }
+
+    //----------------------------------------------------------
+    void InitDepartmentQuality(Department eFrom, Department eTo, float fFrom, float fTo)
+    {
+        this.DepartmentQualities[eFrom] = new Dictionary<Department, float[]>();
+        this.DepartmentQualities[eFrom][eTo] = new float[2];
+        this.DepartmentQualities[eFrom][eTo][0] = fFrom;
+        this.DepartmentQualities[eFrom][eTo][1] = fTo;
     }
 
     //----------------------------------------------------------
@@ -200,6 +230,21 @@ public class GameState : MonoBehaviour
     private void FinishGame()
     {
         this.CurrentState = State.ShowHighscore;
+    }
+
+    //----------------------------------------------------------
+    public static void Shuffle<T>(IList<T> list)
+    {
+        var rng = new System.Random();
+        int n = list.Count;
+        while (n > 1)
+        {
+            n--;
+            int k = rng.Next(n + 1);
+            T value = list[k];
+            list[k] = list[n];
+            list[n] = value;
+        }
     }
 
     //----------------------------------------------------------
