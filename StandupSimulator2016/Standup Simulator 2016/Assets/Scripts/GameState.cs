@@ -38,7 +38,7 @@ public class GameState : MonoBehaviour
     public State CurrentState;
     public float GameSecondsElapsed;
     public Person[] CurrentPersons;
-    public int CurrentPersonSpeakingIndex = -1;
+    public int CurrentPersonSpeakingIndex = 0;
 
     //----------------------------------------------------------
     public Person CurrentPersonSpeaking {  get { return this.CurrentPersons[this.CurrentPersonSpeakingIndex]; } }
@@ -222,6 +222,7 @@ public class GameState : MonoBehaviour
         {
             var fDegAngle = Mathf.Rad2Deg * -fCurrentAngle;
             this.CurrentPersons[i].transform.localPosition = Quaternion.Euler(new Vector3(0, 0, fDegAngle)) * (Vector3.left * this.PersonDistance);
+            this.CurrentPersons[i].transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 90f + fDegAngle + 180f));
         }
     }
 
