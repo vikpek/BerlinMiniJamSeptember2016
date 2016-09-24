@@ -81,7 +81,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15315125db652c64692c1c847e6c9a83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Department: 4
+  Department: 1
   CurrentState: 0
   CurrentListeningState: 0
   CurrentTalkingState: 0
