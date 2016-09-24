@@ -29,15 +29,31 @@ public class Person : MonoBehaviour
     }
 
     //----------------------------------------------------------
-    public Dictionary<GameState.Department, float> DeparmentQualities = new Dictionary<GameState.Department, float>();
+
+    //----------------------------------------------------------
+    [Space(20)]
+    public GameState.Department Department = GameState.Department.Invalid;
     public State CurrentState = State.Invalid;
     public ListeningState CurrentListeningState = ListeningState.Invalid;
     public TalkingState CurrentTalkingState = TalkingState.Invalid;
 
     //----------------------------------------------------------
+    public Dictionary<GameState.Department, float> DeparmentQualities = new Dictionary<GameState.Department, float>();
+
+    //----------------------------------------------------------
+    private GameState pGameState;
+
+    //----------------------------------------------------------
     private void Start ()
     {
         this.StartListeningState();
+    }
+
+    //----------------------------------------------------------
+    public void InitPerson(GameState.Department eDepartment, GameState pGameState)
+    {
+        this.pGameState = pGameState;
+        this.Department = eDepartment;
     }
 
     //----------------------------------------------------------
