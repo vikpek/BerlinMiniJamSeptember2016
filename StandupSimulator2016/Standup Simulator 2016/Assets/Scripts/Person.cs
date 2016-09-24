@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 public class Person : MonoBehaviour
@@ -37,32 +36,56 @@ public class Person : MonoBehaviour
     public ListeningState CurrentListeningState = ListeningState.Invalid;
     public TalkingState CurrentTalkingState = TalkingState.Invalid;
 
+    public float ScorePerSecond;
+
     //----------------------------------------------------------
     public Dictionary<GameState.Department, float> DeparmentQualities = new Dictionary<GameState.Department, float>();
 
     //----------------------------------------------------------
     private GameState pGameState;
 
+    private PlayerController pPlayer;
+
     //----------------------------------------------------------
     private void Start ()
     {
         this.StartListeningState();
+        this.pPlayer = PlayerController.i;
+        this.ScorePerSecond = 1;
+        this.pGameState = GameState.Instance;
     }
 
-    //----------------------------------------------------------
-    public void InitPerson(GameState.Department eDepartment, GameState pGameState)
+    private void InitDepartments()
     {
-        this.pGameState = pGameState;
-        this.Department = eDepartment;
     }
 
     //----------------------------------------------------------
+    public float GetScorePerSecond()
+    {
+        return ScorePerSecond * 10;
+    }
+
+    //----------------------------------------------------------
+    // Every 0.5
+
+    private float timer = 0;
+    private float maxTime = 0.5f;
     private void Update ()
     {
-        if (this.CurrentState == State.Talking)
+        timer += Time.deltaTime;
+
+        if (timer > maxTime)
         {
-            if (this.CurrentTalkingState == TalkingState.Slow)
+            timer = 0;
+
+            if (UnityEngine.Random.value > 0.5)
             {
+                // Asleep
+                pGameState.DepartmentQualities[Department].
+            }
+            else
+            {
+                // Confuse
                 
             }
         }
@@ -95,4 +118,51 @@ public class Person : MonoBehaviour
     }
 
     //----------------------------------------------------------
+    public bool GetExplain()
+    {
+        if (this.CurrentListeningState == ListeningState.Confused)
+        {
+            this.CurrentListeningState = ListeningState.Understands;
+            return true;
+        }
+        return false;
+    }
+
+    //----------------------------------------------------------
+    public bool GetWakeup()
+    {
+        if (this.CurrentListeningState == ListeningState.Asleep)
+        {
+            this.CurrentListeningState = ListeningState.Understands;
+            return true;
+        }
+        return false;
+    }
+
+    //----------------------------------------------------------
+    public void OnMouseDown()
+    {
+        bool activated = false;
+
+        switch (pPlayer.playerState)
+        {
+            case PlayerController.PlayerState.Idle:
+                break;
+            case PlayerController.PlayerState.ActiveExplain:
+                activated = GetExplain();
+                break;
+            case PlayerController.PlayerState.ActiveWakeup:
+                activated = GetWakeup();
+                break;
+            default:
+                break;
+        }
+
+        if (activated)
+        {
+            pPlayer.BackToIdle();
+        }
+
+    }
+
 }
