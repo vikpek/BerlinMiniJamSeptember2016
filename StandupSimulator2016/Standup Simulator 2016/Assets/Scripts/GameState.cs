@@ -48,7 +48,7 @@ public class GameState : MonoBehaviour
     //----------------------------------------------------------
     private void Awake ()
     {
-        this.Instance = this;
+        GameState.Instance = this;
 
         this.CurrentState = State.WaitToStart;
 	}
