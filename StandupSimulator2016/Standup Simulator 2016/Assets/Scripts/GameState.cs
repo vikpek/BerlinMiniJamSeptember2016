@@ -23,6 +23,8 @@ public class GameState : MonoBehaviour
         Num = Invalid,
     }
 
+    public GameState Instance { get; private set; }
+
     //----------------------------------------------------------
     public int Persons = 5;
     public float GameSeconds = 60 * 5;
@@ -34,6 +36,7 @@ public class GameState : MonoBehaviour
     public State CurrentState;
     public float GameSecondsElapsed;
     public Person[] CurrentPersons;
+    public Person CurrentSpeakingPerson;
 
     //----------------------------------------------------------
     public Dictionary<Department, Dictionary<Department, float[]>> DeparmentQualities = new Dictionary<Department, Dictionary<Department, float[]>>();
@@ -45,6 +48,8 @@ public class GameState : MonoBehaviour
     //----------------------------------------------------------
     private void Awake ()
     {
+        this.Instance = this;
+
         this.CurrentState = State.WaitToStart;
 	}
 
