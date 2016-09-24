@@ -64,14 +64,6 @@ public class Person : MonoBehaviour
         this.IconSleep.SetActive(false);
         this.IconConfuse.SetActive(false);
         this.IconCurrentlyTaking.SetActive(false);
-
-        //
-        var vPosition = this.transform.position;
-        var v2dPosition = Camera.main.WorldToViewportPoint(vPosition);
-
-        this.IconSleep.transform.position = v2dPosition;
-        this.IconConfuse.transform.position = v2dPosition;
-        this.IconCurrentlyTaking.transform.position = v2dPosition;
     }
 
     //----------------------------------------------------------

@@ -85,6 +85,7 @@ public class GameState : MonoBehaviour
             this.pCountDownArm.InitateCountDown((int)this.GameSeconds);
         }
         this.CurrentPersonSpeakingIndex = 0;
+        this.CurrentPersonSpeaking.Talk();
 
         this.CurrentState = State.Running;
     }
