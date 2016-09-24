@@ -57,6 +57,8 @@ public class GameState : MonoBehaviour
     void Start()
     {
         this.InitGame();
+
+        this.StartGame();
     }
 
     //----------------------------------------------------------
