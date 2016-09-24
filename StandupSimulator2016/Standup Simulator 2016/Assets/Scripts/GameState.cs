@@ -30,6 +30,7 @@ public class GameState : MonoBehaviour
     public float GameSeconds = 60 * 5;
     public float PersonDistance = 5;
     public GameObject PersonParent;
+    public CountdownArmAnimator pCountDownArm;
     public List<GameObject> PersonPrefabs = new List<GameObject>();
 
     [Space(20)]
@@ -49,17 +50,28 @@ public class GameState : MonoBehaviour
     private void Awake ()
     {
         GameState.Instance = this;
-
         this.CurrentState = State.WaitToStart;
-	}
+    }
 
     //----------------------------------------------------------
+    void Start()
+    {
+        this.InitGame();
+    }
+
+    //----------------------------------------------------------
+    [ContextMenu("StartGame")]
     public void StartGame()
     {
         this.GameSecondsElapsed = 0;
+        if (this.pCountDownArm != null)
+        {
+            this.pCountDownArm.InitateCountDown((int)this.GameSeconds);
+        }
         this.CurrentState = State.Running;
     }
 
+    //----------------------------------------------------------
     [ContextMenu("InitGame")]
     void InitGame()
     {
@@ -173,9 +185,20 @@ public class GameState : MonoBehaviour
     {
         if (this.CurrentState == State.Running)
         {
-            this.GameSeconds += Time.unscaledDeltaTime;
+            this.GameSecondsElapsed += Time.unscaledDeltaTime;
+
+            if (this.GameSecondsElapsed >= this.GameSeconds)
+            {
+                this.FinishGame();
+            }
         }
 	}
+
+    //----------------------------------------------------------
+    private void FinishGame()
+    {
+        this.CurrentState = State.ShowHighscore;
+    }
 
     //----------------------------------------------------------
 }
