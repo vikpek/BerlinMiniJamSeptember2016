@@ -87,6 +87,14 @@ public class GameState : MonoBehaviour
         this.CurrentPersonSpeakingIndex = 0;
         this.CurrentPersonSpeaking.Talk();
 
+        for (int i=0;i<this.CurrentPersons.Length;++i)
+        {
+            if (i != this.CurrentPersonSpeakingIndex)
+            {
+                this.CurrentPersons[i].StartListeningState();
+            }
+        }
+
         this.CurrentState = State.Running;
     }
 
@@ -302,6 +310,14 @@ public class GameState : MonoBehaviour
     private void FinishGame()
     {
         this.CurrentState = State.ShowHighscore;
+
+        this.pCountDownArm.StopAllCoroutines();
+
+        for (int i = 0; i < this.CurrentPersons.Length; ++i)
+        {
+            this.CurrentPersons[i].Reset();
+        }
+
     }
 
     //----------------------------------------------------------

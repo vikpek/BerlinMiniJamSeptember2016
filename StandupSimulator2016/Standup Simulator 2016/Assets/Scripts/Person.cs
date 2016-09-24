@@ -64,6 +64,19 @@ public class Person : MonoBehaviour
         this.IconSleep.SetActive(false);
         this.IconConfuse.SetActive(false);
         this.IconCurrentlyTaking.SetActive(false);
+
+        this.IconConfuse.transform.localRotation = Quaternion.identity;
+        this.IconSleep.transform.localRotation = Quaternion.identity;
+        this.IconCurrentlyTaking.transform.localRotation = Quaternion.identity;
+    }
+
+    //----------------------------------------------------------
+    public void Reset()
+    {
+        this.CurrentState = State.Invalid;
+        this.IconSleep.SetActive(false);
+        this.IconConfuse.SetActive(false);
+        this.IconCurrentlyTaking.SetActive(false);
     }
 
     //----------------------------------------------------------
@@ -163,17 +176,21 @@ public class Person : MonoBehaviour
 
         this.IconSleep.SetActive(false);
         this.IconConfuse.SetActive(false);
-        this.IconCurrentlyTaking.SetActive(true);
+        this.IconCurrentlyTaking.SetActive(false);
 
         this.TalkingTimeElapsed = 0;
         this.MaxTimeForScore = Random.Range(9f, 13f);
     }
 
     //----------------------------------------------------------
-    private void StartListeningState()
+    public void StartListeningState()
     {
         this.CurrentState = State.Listening;
         this.CurrentListeningState = ListeningState.Understands;
+
+        this.IconSleep.SetActive(false);
+        this.IconConfuse.SetActive(false);
+        this.IconCurrentlyTaking.SetActive(true);
     }
 
     //----------------------------------------------------------
