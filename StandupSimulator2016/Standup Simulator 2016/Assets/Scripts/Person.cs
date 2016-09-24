@@ -41,12 +41,14 @@ public class Person : MonoBehaviour
 
     public float ScorePerSecond;
 
+    public float TalkingTimeElapsed;
+    public float MaxTimeForScore;
+
     //----------------------------------------------------------
     public Dictionary<GameState.Department, float> DepartmentQualities = new Dictionary<GameState.Department, float>();
 
     //----------------------------------------------------------
     private GameState pGameState;
-
     private PlayerController pPlayer;
 
     //----------------------------------------------------------
@@ -93,6 +95,9 @@ public class Person : MonoBehaviour
     //----------------------------------------------------------
     public float GetScorePerSecond()
     {
+        if (this.TalkingTimeElapsed >= this.MaxTimeForScore)
+            return 0;
+
         return ScorePerSecond * 10;
     }
 
@@ -102,7 +107,7 @@ public class Person : MonoBehaviour
     private float maxTime = 0.5f;
     private void Update ()
     {
-        timer += Time.deltaTime;
+        timer += Time.unscaledDeltaTime;
 
         if (timer > maxTime && 
             this.CurrentState == State.Listening &&
@@ -131,6 +136,11 @@ public class Person : MonoBehaviour
                 }
             }
         }
+
+        if (this.CurrentState == State.Talking)
+        {
+            this.TalkingTimeElapsed += Time.unscaledDeltaTime;
+        }
 	}
 
     //----------------------------------------------------------
@@ -154,6 +164,9 @@ public class Person : MonoBehaviour
         this.IconSleep.SetActive(false);
         this.IconConfuse.SetActive(false);
         this.IconCurrentlyTaking.SetActive(true);
+
+        this.TalkingTimeElapsed = 0;
+        this.MaxTimeForScore = Random.Range(9f, 13f);
     }
 
     //----------------------------------------------------------
