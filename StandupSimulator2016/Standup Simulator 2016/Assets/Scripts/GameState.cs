@@ -226,6 +226,8 @@ public class GameState : MonoBehaviour
     }
 
     //----------------------------------------------------------
+    private float timer = 0;
+    private float maxTime = 0.5f;
     private void Update ()
     {
         if (this.CurrentState == State.Running)
@@ -236,8 +238,31 @@ public class GameState : MonoBehaviour
             {
                 this.FinishGame();
             }
+            else
+            {
+                timer += Time.deltaTime;
+
+                if (timer > maxTime)
+                {
+                    timer = 0;
+                    this.GetScoreOfAllListeningPlayers();
+                }
+            }
         }
 	}
+
+    //----------------------------------------------------------
+    private void GetScoreOfAllListeningPlayers()
+    {
+        for (int i = 0; i < this.CurrentPersons.Length; ++i)
+        {
+            var pPerson = this.CurrentPersons[i];
+            if (pPerson != this.CurrentPersonSpeaking)
+            {
+                this.Score += pPerson.GetScorePerSecond();
+            }
+        }
+    }
 
     //----------------------------------------------------------
     private void FinishGame()
