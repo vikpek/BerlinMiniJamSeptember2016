@@ -6,10 +6,8 @@ public class CountdownArmAnimator : MonoBehaviour {
 
 	public Transform arm;
 
-	private const float secondsToDegrees = 180f / 60f;
+	private const float secondsToDegrees = 180f / 120f;
 
-	void Start(){
-	}
 	public void InitateCountDown(int seconds){
 		StartCoroutine (StartCountdownWithSeconds(seconds));
 	}
