@@ -46,8 +46,8 @@ public class PlayerController : MonoBehaviour
 
     public void Skip()
     {
-        Person currSpeaker = _gameState.CurrentPersonSpeaking;
 
+        _gameState.GoToNextPerson();
         //  From Game State - move to the next person!
     }
 }

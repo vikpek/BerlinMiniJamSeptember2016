@@ -41,7 +41,17 @@ public class GameState : MonoBehaviour
     public int CurrentPersonSpeakingIndex = 0;
 
     //----------------------------------------------------------
-    public Person CurrentPersonSpeaking {  get { return this.CurrentPersons[this.CurrentPersonSpeakingIndex]; } }
+    public Person CurrentPersonSpeaking
+    {
+        get
+        {
+            if (this.CurrentPersonSpeakingIndex < 0 ||
+                this.CurrentPersonSpeakingIndex >= this.CurrentPersons.Length)
+                return null;
+
+            return this.CurrentPersons[this.CurrentPersonSpeakingIndex];
+        }
+    }
 
     //----------------------------------------------------------
     public Dictionary<Department, Dictionary<Department, float[]>> DepartmentQualities = new Dictionary<Department, Dictionary<Department, float[]>>();
@@ -74,6 +84,9 @@ public class GameState : MonoBehaviour
         {
             this.pCountDownArm.InitateCountDown((int)this.GameSeconds);
         }
+        this.CurrentPersonSpeakingIndex = 0;
+        this.CurrentPersonSpeaking.Talk();
+
         this.CurrentState = State.Running;
     }
 
@@ -251,6 +264,26 @@ public class GameState : MonoBehaviour
             }
         }
 	}
+
+    public void GoToNextPerson()
+    {
+        if (this.CurrentPersonSpeaking != null)
+        {
+            this.CurrentPersonSpeaking.StopTalk();
+        }
+
+        // next person
+        this.CurrentPersonSpeakingIndex++;
+
+        if (this.CurrentPersonSpeakingIndex >= this.Persons)
+        {
+            this.FinishGame();
+        }
+        else
+        {
+            this.CurrentPersonSpeaking.Talk();
+        }
+    }
 
     //----------------------------------------------------------
     private void GetScoreOfAllListeningPlayers()
