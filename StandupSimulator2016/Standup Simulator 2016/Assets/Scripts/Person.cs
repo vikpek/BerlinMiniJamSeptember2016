@@ -28,6 +28,9 @@ public class Person : MonoBehaviour
     }
 
     //----------------------------------------------------------
+    public GameObject IconSleep;
+    public GameObject IconConfuse;
+    public GameObject IconCurrentlyTaking;
 
     //----------------------------------------------------------
     [Space(20)]
@@ -49,12 +52,16 @@ public class Person : MonoBehaviour
     //----------------------------------------------------------
     private void Start ()
     {
+        this.pGameState = GameState.Instance;
+
         this.InitDepartments();
 
         this.StartListeningState();
         this.pPlayer = PlayerController.i;
         this.ScorePerSecond = 1;
-        this.pGameState = GameState.Instance;
+        this.IconSleep.SetActive(false);
+        this.IconConfuse.SetActive(false);
+        this.IconCurrentlyTaking.SetActive(false);
     }
 
     //----------------------------------------------------------
@@ -97,18 +104,31 @@ public class Person : MonoBehaviour
     {
         timer += Time.deltaTime;
 
-        if (timer > maxTime)
+        if (timer > maxTime && 
+            this.CurrentState == State.Listening &&
+            this.CurrentListeningState == ListeningState.Understands)
         {
             timer = 0;
 
+            var pTalkingPerson = GameState.Instance.CurrentPersonSpeaking;
+            var eTalkingDepartment = pTalkingPerson.Department;
             if (UnityEngine.Random.value > 0.5)
             {
                 // Asleep
+                var fQualityThreshold = this.DepartmentQualities[eTalkingDepartment];
+                if (UnityEngine.Random.value > fQualityThreshold)
+                {
+                    this.GoToSleep();
+                }
             }
             else
             {
                 // Confuse
-                
+                var fQualityThreshold = this.DepartmentQualities[eTalkingDepartment];
+                if (UnityEngine.Random.value > fQualityThreshold)
+                {
+                    this.GoToConfuse();
+                }
             }
         }
 	}
@@ -116,7 +136,7 @@ public class Person : MonoBehaviour
     //----------------------------------------------------------
     public void Talk()
     {
-        this.StartListeningState();
+        this.StartTalkState();
     }
 
     //----------------------------------------------------------
@@ -130,6 +150,10 @@ public class Person : MonoBehaviour
     {
         this.CurrentState = State.Talking;
         this.CurrentTalkingState = TalkingState.Idle;
+
+        this.IconSleep.SetActive(false);
+        this.IconConfuse.SetActive(false);
+        this.IconCurrentlyTaking.SetActive(true);
     }
 
     //----------------------------------------------------------
@@ -140,11 +164,42 @@ public class Person : MonoBehaviour
     }
 
     //----------------------------------------------------------
+    private void GoToSleep()
+    {
+        this.CurrentListeningState = ListeningState.Asleep;
+
+        this.ScorePerSecond = 0;
+
+        this.IconSleep.SetActive(true);
+        this.IconConfuse.SetActive(false);
+        this.IconCurrentlyTaking.SetActive(false);
+    }
+
+    //----------------------------------------------------------
+    private void GoToConfuse()
+    {
+        this.CurrentListeningState = ListeningState.Asleep;
+
+        this.ScorePerSecond = 0.5f;
+
+        this.IconSleep.SetActive(false);
+        this.IconConfuse.SetActive(true);
+        this.IconCurrentlyTaking.SetActive(false);
+    }
+
+    //----------------------------------------------------------
     public bool GetExplain()
     {
         if (this.CurrentListeningState == ListeningState.Confused)
         {
             this.CurrentListeningState = ListeningState.Understands;
+
+            this.ScorePerSecond = 1f;
+
+            this.IconSleep.SetActive(false);
+            this.IconConfuse.SetActive(false);
+            this.IconCurrentlyTaking.SetActive(false);
+
             return true;
         }
         return false;
@@ -156,6 +211,13 @@ public class Person : MonoBehaviour
         if (this.CurrentListeningState == ListeningState.Asleep)
         {
             this.CurrentListeningState = ListeningState.Understands;
+
+            this.ScorePerSecond = 1f;
+
+            this.IconSleep.SetActive(false);
+            this.IconConfuse.SetActive(false);
+            this.IconCurrentlyTaking.SetActive(false);
+
             return true;
         }
         return false;

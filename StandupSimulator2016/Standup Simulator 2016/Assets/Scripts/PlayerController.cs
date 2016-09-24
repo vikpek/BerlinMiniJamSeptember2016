@@ -6,6 +6,8 @@ public class PlayerController : MonoBehaviour
 
     public PlayerState playerState;
 
+    private GameState _gameState;
+
     public enum PlayerState
     {
         Idle,
@@ -21,6 +23,7 @@ public class PlayerController : MonoBehaviour
 
     public void Start()
     {
+        _gameState = GameState.Instance;
         playerState = PlayerState.Idle;
     }
 
@@ -43,6 +46,8 @@ public class PlayerController : MonoBehaviour
 
     public void Skip()
     {
-        Person currSpeaker = GameState.Instance.CurrentPersonSpeaking;
+        Person currSpeaker = _gameState.CurrentPersonSpeaking;
+
+        //  From Game State - move to the next person!
     }
 }
