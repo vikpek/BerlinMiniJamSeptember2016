@@ -43,6 +43,6 @@ public class PlayerController : MonoBehaviour
 
     public void Skip()
     {
-        Person currSpeaker = GameState.Instance.CurrentSpeakingPerson;
+        Person currSpeaker = GameState.Instance.CurrentPersonSpeaking;
     }
 }

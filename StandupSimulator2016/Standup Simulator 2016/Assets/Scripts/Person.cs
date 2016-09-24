@@ -81,7 +81,6 @@ public class Person : MonoBehaviour
             if (UnityEngine.Random.value > 0.5)
             {
                 // Asleep
-                pGameState.DepartmentQualities[Department].
             }
             else
             {
