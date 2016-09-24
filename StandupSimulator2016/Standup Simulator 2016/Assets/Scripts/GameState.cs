@@ -23,7 +23,7 @@ public class GameState : MonoBehaviour
         Num = Invalid,
     }
 
-    public GameState Instance { get; private set; }
+    public static GameState Instance { get; private set; }
 
     //----------------------------------------------------------
     public int Persons = 5;
@@ -66,9 +66,6 @@ public class GameState : MonoBehaviour
         this.pPersonSetup = new List<Department>();
         for (int i = 0; i < this.Persons; ++i)
         {
-            if (i >= this.Persons)
-                break;
-
             if (i < (int)Department.Num)
             {
                 this.pPersonSetup.Add((Department)i);
@@ -79,6 +76,8 @@ public class GameState : MonoBehaviour
             }
         }
         Shuffle(this.pPersonSetup);
+
+        this.CreatePersons();
     }
 
     //----------------------------------------------------------
@@ -97,7 +96,7 @@ public class GameState : MonoBehaviour
     }
 
     //----------------------------------------------------------
-    [ContextMenu("CreatePersons")]
+    //[ContextMenu("CreatePersons")]
     void CreatePersons()
     {
         this.DestroyPersons();
