@@ -30,8 +30,17 @@ public class GameState : MonoBehaviour
     public float GameSeconds = 60 * 5;
     public float PersonDistance = 5;
     public GameObject PersonParent;
+    public float SecondsToUpdatePlayerState = 1f;
+    public float SecondsToAddScore = 1f;
+    public bool RotateAllPersonsToTalkingPlayer = false;
+
+    [Space(5)]
     public CountdownArmAnimator pCountDownArm;
     public List<GameObject> PersonPrefabs = new List<GameObject>();
+    public GameObject WaitingUi;
+    public GameObject RunningUi;
+    public GameObject FinishedUi;
+    public ProgressBarController TalkingFinishProgress;
 
     [Space(20)]
     public float Score;
@@ -64,14 +73,16 @@ public class GameState : MonoBehaviour
     {
         GameState.Instance = this;
         this.CurrentState = State.WaitToStart;
+
+        this.WaitingUi.SetActive(false);
+        this.RunningUi.SetActive(false);
+        this.FinishedUi.SetActive(false);
     }
 
     //----------------------------------------------------------
     void Start()
     {
         this.InitGame();
-
-        this.StartGame();
     }
 
     //----------------------------------------------------------
@@ -96,6 +107,10 @@ public class GameState : MonoBehaviour
         }
 
         this.CurrentState = State.Running;
+
+        this.WaitingUi.SetActive(false);
+        this.RunningUi.SetActive(true);
+        this.FinishedUi.SetActive(false);
     }
 
     //----------------------------------------------------------
@@ -106,6 +121,13 @@ public class GameState : MonoBehaviour
         this.InitPersonDepartments();
 
         this.CreatePersons();
+        this.RotateAllPersonsToPerson(null);
+
+        this.CurrentState = State.WaitToStart;
+
+        this.WaitingUi.SetActive(true);
+        this.RunningUi.SetActive(false);
+        this.FinishedUi.SetActive(false);
     }
 
     //----------------------------------------------------------
@@ -242,14 +264,50 @@ public class GameState : MonoBehaviour
         for (int i = 0; i < this.Persons; ++i, fCurrentAngle += fAngleStep)
         {
             var fDegAngle = Mathf.Rad2Deg * -fCurrentAngle;
-            this.CurrentPersons[i].transform.localPosition = Quaternion.Euler(new Vector3(0, 0, fDegAngle)) * (Vector3.left * this.PersonDistance);
-            this.CurrentPersons[i].transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 90f + fDegAngle + 180f));
+            this.CurrentPersons[i].transform.localPosition = Quaternion.AngleAxis(fDegAngle, Vector3.forward) * (Vector3.left * this.PersonDistance);
         }
     }
 
     //----------------------------------------------------------
+    public void RotateAllPersonsToPerson(Person pPerson)
+    {
+        var vWorldPositionToRotateTo = Vector3.zero;
+        if (pPerson != null)
+        {
+            vWorldPositionToRotateTo = pPerson.transform.position;
+        }
+        else
+        {
+            vWorldPositionToRotateTo = this.PersonParent.transform.position;
+        }
+
+        for (int i = 0; i < this.Persons; ++i)
+        {
+            var vRotateTo = vWorldPositionToRotateTo;
+            var pPersonToRotate = this.CurrentPersons[i];
+            
+            // rotate the talking person to the lead (you)
+            if (pPersonToRotate == pPerson)
+            {
+                vRotateTo = this.PersonParent.transform.position;
+            }
+
+            // rotate the person to to targetposition
+            var fAngle = AngleBetweenVector3(pPersonToRotate.transform.position, vRotateTo);
+            this.CurrentPersons[i].ModelToRotate.transform.rotation = Quaternion.AngleAxis(fAngle, Vector3.forward) * Quaternion.Euler(-90,0,0);
+        }
+    }
+
+    //----------------------------------------------------------
+    private float AngleBetweenVector3(Vector3 vec1, Vector3 vec2)
+    {
+        Vector3 diference = vec2 - vec1;
+        float sign = (vec2.x < vec1.x) ? 1.0f : -1.0f;
+        return Vector3.Angle(Vector3.up, diference) * sign;
+    }
+
+    //----------------------------------------------------------
     private float timer = 0;
-    private float maxTime = 0.5f;
     private void Update ()
     {
         if (this.CurrentState == State.Running)
@@ -264,15 +322,22 @@ public class GameState : MonoBehaviour
             {
                 timer += Time.deltaTime;
 
-                if (timer > maxTime)
+                if (timer >= SecondsToAddScore)
                 {
                     timer = 0;
                     this.GetScoreOfAllListeningPlayers();
                 }
+
+                TalkingFinishProgress.foregroundImage.fillAmount = this.CurrentPersonSpeaking.GetTalkingProgress();
             }
+        }
+        else
+        {
+            timer = 0;
         }
 	}
 
+    //----------------------------------------------------------
     public void GoToNextPerson()
     {
         if (this.CurrentPersonSpeaking != null)
@@ -296,11 +361,14 @@ public class GameState : MonoBehaviour
     //----------------------------------------------------------
     private void GetScoreOfAllListeningPlayers()
     {
+        if (this.CurrentPersonSpeaking.HasTalkingTimeEnded())
+            return;
+
         for (int i = 0; i < this.CurrentPersons.Length; ++i)
         {
-            var pPerson = this.CurrentPersons[i];
-            if (pPerson != this.CurrentPersonSpeaking)
+            if (i != this.CurrentPersonSpeakingIndex)
             {
+                var pPerson = this.CurrentPersons[i];
                 this.Score += pPerson.GetScorePerSecond();
             }
         }
@@ -311,13 +379,17 @@ public class GameState : MonoBehaviour
     {
         this.CurrentState = State.ShowHighscore;
 
+        this.WaitingUi.SetActive(false);
+        this.RunningUi.SetActive(false);
+        this.FinishedUi.SetActive(true);
+
         this.pCountDownArm.StopAllCoroutines();
 
         for (int i = 0; i < this.CurrentPersons.Length; ++i)
         {
-            this.CurrentPersons[i].Reset();
+            this.CurrentPersons[i].SetToCelebrating();
         }
-
+        this.RotateAllPersonsToPerson(null);
     }
 
     //----------------------------------------------------------

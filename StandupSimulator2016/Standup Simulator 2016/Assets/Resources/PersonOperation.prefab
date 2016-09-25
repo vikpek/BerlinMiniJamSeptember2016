@@ -128,7 +128,7 @@ GameObject:
   - 224: {fileID: 224000011073687822}
   - 222: {fileID: 222000011617060464}
   - 114: {fileID: 114000010838110846}
-  m_Layer: 8
+  m_Layer: 5
   m_Name: Asleep
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -144,7 +144,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 4000013941213286}
   - 114: {fileID: 114000013756066574}
-  - 135: {fileID: 135000010801007682}
+  - 136: {fileID: 136000012883071586}
   m_Layer: 8
   m_Name: PersonOperation
   m_TagString: Untagged
@@ -162,7 +162,7 @@ GameObject:
   - 224: {fileID: 224000014227065470}
   - 222: {fileID: 222000012493421776}
   - 114: {fileID: 114000011095162856}
-  m_Layer: 8
+  m_Layer: 5
   m_Name: Confused
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -179,7 +179,7 @@ GameObject:
   - 224: {fileID: 224000011206281044}
   - 222: {fileID: 222000013074423712}
   - 114: {fileID: 114000010256210862}
-  m_Layer: 8
+  m_Layer: 5
   m_Name: CurrentlyTalking
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -394,8 +394,8 @@ GameObject:
   - 223: {fileID: 223000011555816298}
   - 114: {fileID: 114000011497058154}
   - 114: {fileID: 114000012952528146}
-  m_Layer: 8
-  m_Name: UI (1)
+  m_Layer: 5
+  m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -878,7 +878,7 @@ Animator:
   m_GameObject: {fileID: 1000010311803890}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 8eab99c3e3dde4361a5f446e366d5613, type: 3}
-  m_Controller: {fileID: 9100000, guid: 9c9926b39d5f144a398112fcacd57763, type: 2}
+  m_Controller: {fileID: 9100000, guid: 238350f416b30124091fb8efe25abccd, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1018,6 +1018,8 @@ MonoBehaviour:
   IconSleep: {fileID: 1000010802435744}
   IconConfuse: {fileID: 1000011300652728}
   IconCurrentlyTaking: {fileID: 1000011317130840}
+  ModelToRotate: {fileID: 1000010311803890}
+  ModelToAnimate: {fileID: 95000014277965382}
   Department: 3
   CurrentState: 0
   CurrentListeningState: 0
@@ -1025,8 +1027,8 @@ MonoBehaviour:
   ScorePerSecond: 0
   TalkingTimeElapsed: 0
   MaxTimeForScore: 0
---- !u!135 &135000010801007682
-SphereCollider:
+--- !u!136 &136000012883071586
+CapsuleCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -1034,9 +1036,10 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
   m_Radius: 0.3
-  m_Center: {x: 0, y: 0, z: -1}
+  m_Height: 1.35
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: -0.53}
 --- !u!137 &137000010946075406
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -1274,7 +1277,7 @@ RectTransform:
   m_RootOrder: 1
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 322.5, y: 181.40997}
+  m_AnchoredPosition: {x: 322.4, y: 181.40997}
   m_SizeDelta: {x: 645, y: 363}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000014227065470

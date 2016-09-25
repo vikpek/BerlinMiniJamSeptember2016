@@ -16,7 +16,6 @@ public class CountdownArmAnimator : MonoBehaviour {
 		int restSeconds = seconds;
 		float tmp = 90f;
 		while (restSeconds > 0) {
-			DateTime time = DateTime.Now;
 			tmp -= secondsToDegrees;
 			arm.localRotation = Quaternion.Euler (0f, 0f, tmp);
 			restSeconds--;

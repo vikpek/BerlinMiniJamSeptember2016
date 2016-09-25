@@ -52,8 +52,8 @@ GameObject:
   - 223: {fileID: 223000011771130278}
   - 114: {fileID: 114000013839254808}
   - 114: {fileID: 114000011613918292}
-  m_Layer: 8
-  m_Name: UI (2)
+  m_Layer: 5
+  m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -84,7 +84,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 4000013100898592}
   - 114: {fileID: 114000010407894978}
-  - 135: {fileID: 135000013330395982}
+  - 136: {fileID: 136000010875974266}
   m_Layer: 8
   m_Name: PersonCode
   m_TagString: Untagged
@@ -192,7 +192,7 @@ GameObject:
   - 224: {fileID: 224000012690996356}
   - 222: {fileID: 222000012984220232}
   - 114: {fileID: 114000010613861846}
-  m_Layer: 8
+  m_Layer: 5
   m_Name: Confused
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -239,7 +239,7 @@ GameObject:
   - 224: {fileID: 224000013167214248}
   - 222: {fileID: 222000012149745198}
   - 114: {fileID: 114000010071379370}
-  m_Layer: 8
+  m_Layer: 5
   m_Name: Asleep
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -439,7 +439,7 @@ GameObject:
   - 224: {fileID: 224000010324493568}
   - 222: {fileID: 222000013229715744}
   - 114: {fileID: 114000013517450974}
-  m_Layer: 8
+  m_Layer: 5
   m_Name: CurrentlyTalking
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -878,7 +878,7 @@ Animator:
   m_GameObject: {fileID: 1000013075594930}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: a39cf9b033f524f24acc72ceb131b13a, type: 3}
-  m_Controller: {fileID: 9100000, guid: e5a6e8cfc76324b09bd41e899b6965b7, type: 2}
+  m_Controller: {fileID: 9100000, guid: 6a18f80fd645a064bb99741358cb8051, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -927,6 +927,8 @@ MonoBehaviour:
   IconSleep: {fileID: 1000010899497360}
   IconConfuse: {fileID: 1000010565272178}
   IconCurrentlyTaking: {fileID: 1000013609551412}
+  ModelToRotate: {fileID: 1000013075594930}
+  ModelToAnimate: {fileID: 95000010541734222}
   Department: 1
   CurrentState: 0
   CurrentListeningState: 0
@@ -1025,8 +1027,8 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
---- !u!135 &135000013330395982
-SphereCollider:
+--- !u!136 &136000010875974266
+CapsuleCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -1034,9 +1036,10 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
   m_Radius: 0.3
-  m_Center: {x: 0, y: 0, z: -1}
+  m_Height: 1.35
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: -0.53}
 --- !u!137 &137000010113501608
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -1256,7 +1259,7 @@ RectTransform:
   m_RootOrder: 1
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 322.5, y: 181.41}
+  m_AnchoredPosition: {x: 322.4, y: 181.41}
   m_SizeDelta: {x: 645, y: 363}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000012690996356

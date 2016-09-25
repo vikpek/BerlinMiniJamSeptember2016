@@ -7,8 +7,10 @@ public class Person : MonoBehaviour
     public enum State
     {
         Invalid,
+        Idle,           // no game is running, just idling
         Listening,
-        Talking
+        Talking,
+        Celebrating,
     }
 
     public enum ListeningState
@@ -31,6 +33,8 @@ public class Person : MonoBehaviour
     public GameObject IconSleep;
     public GameObject IconConfuse;
     public GameObject IconCurrentlyTaking;
+    public GameObject ModelToRotate;
+    public Animator ModelToAnimate;
 
     //----------------------------------------------------------
     [Space(20)]
@@ -48,22 +52,17 @@ public class Person : MonoBehaviour
     public Dictionary<GameState.Department, float> DepartmentQualities = new Dictionary<GameState.Department, float>();
 
     //----------------------------------------------------------
-    private GameState pGameState;
     private PlayerController pPlayer;
 
     //----------------------------------------------------------
     private void Start ()
     {
-        this.pGameState = GameState.Instance;
-
         this.InitDepartments();
 
-        this.StartListeningState();
         this.pPlayer = PlayerController.i;
         this.ScorePerSecond = 1;
-        this.IconSleep.SetActive(false);
-        this.IconConfuse.SetActive(false);
-        this.IconCurrentlyTaking.SetActive(false);
+
+        this.Reset();
 
         this.IconConfuse.transform.localRotation = Quaternion.identity;
         this.IconSleep.transform.localRotation = Quaternion.identity;
@@ -73,10 +72,32 @@ public class Person : MonoBehaviour
     //----------------------------------------------------------
     public void Reset()
     {
-        this.CurrentState = State.Invalid;
+        this.CurrentState = State.Idle;
         this.IconSleep.SetActive(false);
         this.IconConfuse.SetActive(false);
         this.IconCurrentlyTaking.SetActive(false);
+
+        this.ModelToAnimate.SetBool("Talking", false);
+        this.ModelToAnimate.SetBool("Confuse", false);
+        this.ModelToAnimate.SetBool("Sleep", false);
+        this.ModelToAnimate.SetBool("Celebrating", false);
+
+        this.ModelToAnimate.SetFloat("RandomSpeed", Random.Range(0.9f, 1.1f));
+        this.ModelToAnimate.SetFloat("CycleOffset", Random.Range(0f, 1f));
+    }
+
+    //----------------------------------------------------------
+    public void SetToCelebrating()
+    {
+        this.CurrentState = State.Celebrating;
+        this.IconSleep.SetActive(false);
+        this.IconConfuse.SetActive(false);
+        this.IconCurrentlyTaking.SetActive(false);
+
+        this.ModelToAnimate.SetBool("Talking", false);
+        this.ModelToAnimate.SetBool("Confuse", false);
+        this.ModelToAnimate.SetBool("Sleep", false);
+        this.ModelToAnimate.SetBool("Celebrating", true);
     }
 
     //----------------------------------------------------------
@@ -93,8 +114,6 @@ public class Person : MonoBehaviour
             {
                 var fValue = Random.Range(aRange[0], aRange[1]);
                 this.DepartmentQualities.Add(eDepartmentTo, fValue);
-
-                Debug.Log("Person: To Department: " + eDepartmentTo.ToString() + ": " + fValue, this);
             }
             else
             {
@@ -106,48 +125,62 @@ public class Person : MonoBehaviour
     }
 
     //----------------------------------------------------------
+    public bool HasTalkingTimeEnded()
+    {
+        return (this.TalkingTimeElapsed >= this.MaxTimeForScore);
+    }
+
+    //----------------------------------------------------------
+    public float GetTalkingProgress()
+    {
+        return Mathf.Min(1f, (this.TalkingTimeElapsed / this.MaxTimeForScore));
+    }
+
+    //----------------------------------------------------------
     public float GetScorePerSecond()
     {
-        if (this.TalkingTimeElapsed >= this.MaxTimeForScore)
-            return 0;
-
         return ScorePerSecond * 10;
     }
 
     //----------------------------------------------------------
     // Every 0.5
     private float timer = 0;
-    private float maxTime = 0.5f;
     private void Update ()
     {
         timer += Time.unscaledDeltaTime;
 
-        if (timer > maxTime && 
-            this.CurrentState == State.Listening &&
+        if (this.CurrentState == State.Listening &&
             this.CurrentListeningState == ListeningState.Understands)
         {
-            timer = 0;
+            if (timer >= GameState.Instance.SecondsToUpdatePlayerState)
+            {
+                timer = 0;
 
-            var pTalkingPerson = GameState.Instance.CurrentPersonSpeaking;
-            var eTalkingDepartment = pTalkingPerson.Department;
-            if (UnityEngine.Random.value > 0.5)
-            {
-                // Asleep
-                var fQualityThreshold = this.DepartmentQualities[eTalkingDepartment];
-                if (UnityEngine.Random.value > fQualityThreshold)
+                var pTalkingPerson = GameState.Instance.CurrentPersonSpeaking;
+                var eTalkingDepartment = pTalkingPerson.Department;
+                if (UnityEngine.Random.value > 0.5f)
                 {
-                    this.GoToSleep();
+                    // Asleep
+                    var fQualityThreshold = this.DepartmentQualities[eTalkingDepartment];
+                    if (UnityEngine.Random.value > fQualityThreshold)
+                    {
+                        this.GoToSleep();
+                    }
+                }
+                else
+                {
+                    // Confuse
+                    var fQualityThreshold = this.DepartmentQualities[eTalkingDepartment];
+                    if (UnityEngine.Random.value > fQualityThreshold)
+                    {
+                        this.GoToConfuse();
+                    }
                 }
             }
-            else
-            {
-                // Confuse
-                var fQualityThreshold = this.DepartmentQualities[eTalkingDepartment];
-                if (UnityEngine.Random.value > fQualityThreshold)
-                {
-                    this.GoToConfuse();
-                }
-            }
+        }
+        else
+        {
+            timer = 0;
         }
 
         if (this.CurrentState == State.Talking)
@@ -176,10 +209,20 @@ public class Person : MonoBehaviour
 
         this.IconSleep.SetActive(false);
         this.IconConfuse.SetActive(false);
-        this.IconCurrentlyTaking.SetActive(false);
+        this.IconCurrentlyTaking.SetActive(true);
+
+        this.ModelToAnimate.SetBool("Talking", true);
+        this.ModelToAnimate.SetBool("Confuse", false);
+        this.ModelToAnimate.SetBool("Sleep", false);
+        this.ModelToAnimate.SetBool("Celebrating", false);
 
         this.TalkingTimeElapsed = 0;
         this.MaxTimeForScore = Random.Range(9f, 13f);
+
+        if (GameState.Instance.RotateAllPersonsToTalkingPlayer)
+        {
+            GameState.Instance.RotateAllPersonsToPerson(this);
+        }
     }
 
     //----------------------------------------------------------
@@ -190,7 +233,12 @@ public class Person : MonoBehaviour
 
         this.IconSleep.SetActive(false);
         this.IconConfuse.SetActive(false);
-        this.IconCurrentlyTaking.SetActive(true);
+        this.IconCurrentlyTaking.SetActive(false);
+
+        this.ModelToAnimate.SetBool("Talking", false);
+        this.ModelToAnimate.SetBool("Confuse", false);
+        this.ModelToAnimate.SetBool("Sleep", false);
+        this.ModelToAnimate.SetBool("Celebrating", false);
     }
 
     //----------------------------------------------------------
@@ -203,18 +251,45 @@ public class Person : MonoBehaviour
         this.IconSleep.SetActive(true);
         this.IconConfuse.SetActive(false);
         this.IconCurrentlyTaking.SetActive(false);
+
+        this.ModelToAnimate.SetBool("Talking", false);
+        this.ModelToAnimate.SetBool("Confuse", false);
+        this.ModelToAnimate.SetBool("Sleep", true);
+        this.ModelToAnimate.SetBool("Celebrating", false);
     }
 
     //----------------------------------------------------------
     private void GoToConfuse()
     {
-        this.CurrentListeningState = ListeningState.Asleep;
+        this.CurrentListeningState = ListeningState.Confused;
 
         this.ScorePerSecond = 0.5f;
 
         this.IconSleep.SetActive(false);
         this.IconConfuse.SetActive(true);
         this.IconCurrentlyTaking.SetActive(false);
+
+        this.ModelToAnimate.SetBool("Talking", false);
+        this.ModelToAnimate.SetBool("Confuse", true);
+        this.ModelToAnimate.SetBool("Sleep", false);
+        this.ModelToAnimate.SetBool("Celebrating", false);
+    }
+
+    //----------------------------------------------------------
+    private void ReturnToUnderstands()
+    {
+        this.CurrentListeningState = ListeningState.Understands;
+
+        this.ScorePerSecond = 1f;
+
+        this.IconSleep.SetActive(false);
+        this.IconConfuse.SetActive(false);
+        this.IconCurrentlyTaking.SetActive(false);
+
+        this.ModelToAnimate.SetBool("Talking", false);
+        this.ModelToAnimate.SetBool("Confuse", false);
+        this.ModelToAnimate.SetBool("Sleep", false);
+        this.ModelToAnimate.SetBool("Celebrating", false);
     }
 
     //----------------------------------------------------------
@@ -222,14 +297,7 @@ public class Person : MonoBehaviour
     {
         if (this.CurrentListeningState == ListeningState.Confused)
         {
-            this.CurrentListeningState = ListeningState.Understands;
-
-            this.ScorePerSecond = 1f;
-
-            this.IconSleep.SetActive(false);
-            this.IconConfuse.SetActive(false);
-            this.IconCurrentlyTaking.SetActive(false);
-
+            this.ReturnToUnderstands();
             return true;
         }
         return false;
@@ -240,14 +308,7 @@ public class Person : MonoBehaviour
     {
         if (this.CurrentListeningState == ListeningState.Asleep)
         {
-            this.CurrentListeningState = ListeningState.Understands;
-
-            this.ScorePerSecond = 1f;
-
-            this.IconSleep.SetActive(false);
-            this.IconConfuse.SetActive(false);
-            this.IconCurrentlyTaking.SetActive(false);
-
+            this.ReturnToUnderstands();
             return true;
         }
         return false;
@@ -279,4 +340,5 @@ public class Person : MonoBehaviour
 
     }
 
+    //----------------------------------------------------------
 }

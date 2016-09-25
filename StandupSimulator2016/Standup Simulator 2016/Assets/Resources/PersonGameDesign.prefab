@@ -189,7 +189,7 @@ GameObject:
   - 224: {fileID: 224000013849615946}
   - 222: {fileID: 222000013577575714}
   - 114: {fileID: 114000013174782186}
-  m_Layer: 8
+  m_Layer: 5
   m_Name: CurrentlyTalking
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -237,8 +237,8 @@ GameObject:
   - 223: {fileID: 223000012716041892}
   - 114: {fileID: 114000010240209048}
   - 114: {fileID: 114000013719903246}
-  m_Layer: 8
-  m_Name: UI (1)
+  m_Layer: 5
+  m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -269,7 +269,7 @@ GameObject:
   - 224: {fileID: 224000010115858744}
   - 222: {fileID: 222000010004200698}
   - 114: {fileID: 114000013689555656}
-  m_Layer: 8
+  m_Layer: 5
   m_Name: Confused
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -331,7 +331,7 @@ GameObject:
   - 224: {fileID: 224000010524499688}
   - 222: {fileID: 222000011396273986}
   - 114: {fileID: 114000011145246834}
-  m_Layer: 8
+  m_Layer: 5
   m_Name: Asleep
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -392,7 +392,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 4000012626029130}
   - 114: {fileID: 114000012363081966}
-  - 135: {fileID: 135000013343749744}
+  - 136: {fileID: 136000011717305502}
   m_Layer: 8
   m_Name: PersonGameDesign
   m_TagString: Untagged
@@ -878,7 +878,7 @@ Animator:
   m_GameObject: {fileID: 1000011528329724}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: a4ab9955999914f9680308b1d2074ef4, type: 3}
-  m_Controller: {fileID: 9100000, guid: fef56f560d9fc462694537c7936bc7f2, type: 2}
+  m_Controller: {fileID: 9100000, guid: 6a18f80fd645a064bb99741358cb8051, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -948,6 +948,8 @@ MonoBehaviour:
   IconSleep: {fileID: 1000012972764524}
   IconConfuse: {fileID: 1000012453117122}
   IconCurrentlyTaking: {fileID: 1000012009175204}
+  ModelToRotate: {fileID: 1000011528329724}
+  ModelToAnimate: {fileID: 95000011593340722}
   Department: 2
   CurrentState: 0
   CurrentListeningState: 0
@@ -1025,8 +1027,8 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!135 &135000013343749744
-SphereCollider:
+--- !u!136 &136000011717305502
+CapsuleCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -1034,9 +1036,10 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
   m_Radius: 0.3
-  m_Center: {x: 0, y: 0, z: -1}
+  m_Height: 1.35
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: -0.53}
 --- !u!137 &137000010511161698
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -1274,7 +1277,7 @@ RectTransform:
   m_RootOrder: 1
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 322.5, y: 181.41}
+  m_AnchoredPosition: {x: 322.4, y: 181.41}
   m_SizeDelta: {x: 645, y: 363}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000013849615946
